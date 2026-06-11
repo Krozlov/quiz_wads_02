@@ -18,6 +18,7 @@ export async function GET(request: NextRequest) {
       /** EXAM Q1: wrong field name — Prisma uses camelCase createdAt */
       orderBy: { createdAt: "desc" },
     });
+    
 
     return NextResponse.json({ data: todos });
   } catch (error) {
