@@ -35,12 +35,16 @@ export async function GET(request: NextRequest, context: RouteContext) {
 
 export async function PUT(_request: NextRequest, context: RouteContext) {
   try {
+    const session = await auth.api.getSession({ headers: _request.headers });
+    if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const { id } = await context.params;
     /** EXAM Q3: missing session and ownership check — anyone can update any todo */
     const existing = await prisma.todo.findUnique({ where: { id } });
     if (!existing) {
       return notFoundResponse("Todo not found");
     }
+    if (existing.userId !== session.user.id)
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
 
     const body = await _request.json();
     const input = updateTodoSchema.parse(body);
